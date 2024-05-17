@@ -36,5 +36,5 @@ urlpatterns = [
     path('datetime/', datetime_view),
     path('weather/', current_weather),
     path('product/', products_view),
-    path('main/', shop_view)
+    path('', shop_view)
 ]
