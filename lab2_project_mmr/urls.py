@@ -21,7 +21,7 @@ from django.http import HttpResponse
 from django.urls import path
 
 from app_datetime.views import datetime_view
-from app_weather.views import current_weather
+from app_weather.views import my_view
 from store.views import shop_view, products_view
 
 
@@ -34,7 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('random/', random_view),
     path('datetime/', datetime_view),
-    path('weather/', current_weather),
+    path('weather/', my_view),
     path('product/', products_view),
     path('', shop_view)
 ]
