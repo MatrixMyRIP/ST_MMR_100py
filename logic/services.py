@@ -1,3 +1,6 @@
+import os
+import json
+from store.models import DATABASE
 
 def filtering_category(database: dict[str, dict],
                        category_key: [None, str] = None,
@@ -57,8 +60,16 @@ def add_to_cart(id_product: str) -> bool:
     :return: Возвращает True в случае успешного добавления, а False в случае неуспешного добавления(товара по id_product
     не существует).
     """
-    cart = ...  # TODO Помните, что у вас есть уже реализация просмотра корзины,
+    cart = view_in_cart()  # TODO Помните, что у вас есть уже реализация просмотра корзины,
     # поэтому, чтобы загрузить данные из корзины, не нужно заново писать код.
+    if id_product in DATABASE:
+        if id_product in cart['products']:
+            cart['products'][id_product] += 1
+        else:
+            cart['products'][id_product] = 1
+        with open('cart.json', mode='w', encoding='utf-8') as f:
+            json.dump(cart, f)
+        return True
 
     # ! Обратите внимание, что в переменной cart находится словарь с ключом products.
     # ! Именно в cart["products"] лежит словарь гдк по id продуктов можно получить число продуктов в корзине.
@@ -72,7 +83,7 @@ def add_to_cart(id_product: str) -> bool:
 
     # TODO Не забываем записать обновленные данные cart в 'cart.json'. Так как именно из этого файла мы считываем данные и если мы не запишем изменения, то считать измененные данные не получится.
 
-    return True
+    return False
 
 
 def remove_from_cart(id_product: str) -> bool:
@@ -84,9 +95,13 @@ def remove_from_cart(id_product: str) -> bool:
     :return: Возвращает True в случае успешного удаления, а False в случае неуспешного удаления(товара по id_product
     не существует).
     """
-    cart = ...  # TODO Помните, что у вас есть уже реализация просмотра корзины,
+    cart = view_in_cart()  # TODO Помните, что у вас есть уже реализация просмотра корзины,
     # поэтому, чтобы загрузить данные из корзины, не нужно заново писать код.
-
+    if id_product not in cart['products']:
+        return False
+    cart['products'].pop(id_product)
+    with open('cart.json', mode='w', encoding='utf-8') as f:
+        json.dump(cart, f)
     # С переменной cart функции remove_from_cart ситуация аналогичная, что с cart функции add_to_cart
 
     # TODO Проверьте, а существует ли такой товар в корзине, если нет, то возвращаем False.
