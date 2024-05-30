@@ -31,9 +31,10 @@ def products_view(request):
 
 def shop_view(request):
     if request.method == "GET":
-        with open('store/shop.html', encoding="utf-8") as f:
-            data = f.read()  # Читаем HTML файл
-        return HttpResponse(data)
+        # with open('store/shop.html', encoding="utf-8") as f:
+        #     data = f.read()  # Читаем HTML файл
+        # return HttpResponse(data)
+        return render(request, 'store/shop.html')
 
 
 def products_page_view(request, page):
