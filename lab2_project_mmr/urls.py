@@ -37,3 +37,4 @@ urlpatterns = [
     path('', include('app_weather.urls')),
     path('', include('store.urls')),
 ]
+
