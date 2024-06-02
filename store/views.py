@@ -29,12 +29,17 @@ def products_view(request):
         return JsonResponse(data, safe=False, json_dumps_params={'ensure_ascii': False,
                                                                  'indent': 4})
 
+# def shop_view(request):
+#     if request.method == "GET":
+#         with open('store/shop.html', encoding="utf-8") as f:
+#             data = f.read()  # Читаем HTML файл
+#         return HttpResponse(data)
+
+from django.shortcuts import render
+
 def shop_view(request):
     if request.method == "GET":
-        # with open('store/shop.html', encoding="utf-8") as f:
-        #     data = f.read()  # Читаем HTML файл
-        # return HttpResponse(data)
-        return render(request, 'store/shop.html',context={"products": DATABASE.values()})
+        return render(request, 'store/shop.html')
 
 
 def products_page_view(request, page):
@@ -57,24 +62,10 @@ def products_page_view(request, page):
         return HttpResponse(status=404)
 
 def cart_view(request):
-    # if request.method == "GET":
-    #     data = view_in_cart()  # TODO Вызвать ответственную за это действие функцию
-    #     return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
-    #                                                  'indent': 4})
     if request.method == "GET":
-        data = view_in_cart()
-        json_param = request.GET.get('format')
-        if json_param and json_param.lower() == 'json':
-            return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
-                                                             'indent': 4})
-        products = []  # Список продуктов
-        for product_id, quantity in data['products'].items():
-            product = ...  # 1. Получите информацию о продукте из DATABASE по его product_id. product будет словарём
-            # 2. в словарь product под ключом "quantity" запишите текущее значение товара в корзине
-            product["price_total"] = f"{quantity * product['price_after']:.2f}"  # добавление общей цены позиции с ограничением в 2 знака
-            # 3. добавьте product в список products
-
-        return render(request, "store/cart.html")
+        data = view_in_cart()  # TODO Вызвать ответственную за это действие функцию
+        return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
+                                                     'indent': 4})
 
 
 def cart_add_view(request, id_product):
