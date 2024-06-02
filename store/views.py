@@ -37,28 +37,58 @@ def products_view(request):
 
 from django.shortcuts import render
 
+# def shop_view(request):
+#     if request.method == "GET":
+#         return render(request, 'store/shop.html', context={"products": DATABASE.values()})
+
 def shop_view(request):
     if request.method == "GET":
-        return render(request, 'store/shop.html', context={"products": DATABASE.values()})
+        # Обработка фильтрации из параметров запроса
+        category_key = request.GET.get("category")
+        if ordering_key := request.GET.get("ordering"):
+            if request.GET.get("reverse") in ('true', 'True'):
+                data = filtering_category(DATABASE, category_key, ordering_key,
+                                          True)
+            else:
+                data = filtering_category(DATABASE, category_key, ordering_key)
+        else:
+            data = filtering_category(DATABASE, category_key)
+        return render(request, 'store/shop.html',
+                      context={"products": data,
+                               "category": category_key})
 
+# def products_page_view(request, page):
+#     if request.method == "GET":
+#         if isinstance(page, str):
+#             for data in DATABASE.values():
+#                 if data['html'] == page:  # Если значение переданного параметра совпадает именем html файла
+#                     with open(f'store/products/{data['html']}.html', 'r', encoding="utf-8") as f:
+#                         return HttpResponse(f.read())
+#         elif isinstance(page, int):
+#             if str(page) in DATABASE:
+#                 with open(f'store/products/{DATABASE[str(page)]['html']}.html', 'r', encoding="utf-8") as f:
+#                     return HttpResponse(f.read())
+#         # TODO 1. Откройте файл open(f'store/products/{page}.html', encoding="utf-8") (Не забываем про контекстный менеджер with)
+#         # TODO 2. Прочитайте его содержимое
+#         # TODO 3. Верните HttpResponse c содержимым html файла
+#
+#         # Если за всё время поиска не было совпадений, то значит по данному имени нет соответствующей
+#         # страницы товара и можно вернуть ответ с ошибкой HttpResponse(status=404)
+#         return HttpResponse(status=404)
 
 def products_page_view(request, page):
     if request.method == "GET":
         if isinstance(page, str):
             for data in DATABASE.values():
-                if data['html'] == page:  # Если значение переданного параметра совпадает именем html файла
-                    with open(f'store/products/{data['html']}.html', 'r', encoding="utf-8") as f:
-                        return HttpResponse(f.read())
-        elif isinstance(page, int):
-            if str(page) in DATABASE:
-                with open(f'store/products/{DATABASE[str(page)]['html']}.html', 'r', encoding="utf-8") as f:
-                    return HttpResponse(f.read())
-        # TODO 1. Откройте файл open(f'store/products/{page}.html', encoding="utf-8") (Не забываем про контекстный менеджер with)
-        # TODO 2. Прочитайте его содержимое
-        # TODO 3. Верните HttpResponse c содержимым html файла
+                if data['html'] == page:
+                    return render(request, "store/product.html", context={"product": data})
 
-        # Если за всё время поиска не было совпадений, то значит по данному имени нет соответствующей
-        # страницы товара и можно вернуть ответ с ошибкой HttpResponse(status=404)
+        elif isinstance(page, int):
+            # Обрабатываем условие того, что пытаемся получить страницу товара по его id
+            data = DATABASE.get(str(page))  # Получаем какой странице соответствует данный id
+            if data:
+                return render(request, "store/product.html", context={"product": data})
+
         return HttpResponse(status=404)
 
 # def cart_view(request):
