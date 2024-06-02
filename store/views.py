@@ -19,7 +19,7 @@ def products_view(request):
         category_key = request.GET.get("category")  # Считали 'category'
         ordering_key = request.GET.get("ordering") # Если в параметрах есть 'ordering'
         if ordering_key:
-            if request.GET.get("ordering") and request.GET.get("reverse").lower() == 'true': # Если в параметрах есть 'ordering' и 'reverse'=True
+            if request.GET.get("reverse") and request.GET.get("reverse").lower() == 'true': # Если в параметрах есть 'ordering' и 'reverse'=True
                 data = filtering_category(DATABASE, category_key, ordering_key, True) #  TODO Использовать filtering_category и провести фильтрацию с параметрами category, ordering, reverse=True
             else:  # Если не обнаружили в адресно строке ...&reverse=true, значит reverse=False
                 data = filtering_category(DATABASE, category_key, ordering_key) #  TODO Использовать filtering_category и провести фильтрацию с параметрами category, ordering, reverse=False
