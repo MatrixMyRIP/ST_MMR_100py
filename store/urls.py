@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import products_view, shop_view, products_page_view, cart_view, cart_add_view, cart_del_view
 
-
+app_name = 'store'
 
 urlpatterns = [
     path('', shop_view, name="shop_view"),

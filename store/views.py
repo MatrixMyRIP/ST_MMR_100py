@@ -39,7 +39,7 @@ from django.shortcuts import render
 
 def shop_view(request):
     if request.method == "GET":
-        return render(request, 'store/shop.html')
+        return render(request, 'store/shop.html', context={"products": DATABASE.values()})
 
 
 def products_page_view(request, page):
@@ -61,11 +61,28 @@ def products_page_view(request, page):
         # страницы товара и можно вернуть ответ с ошибкой HttpResponse(status=404)
         return HttpResponse(status=404)
 
+# def cart_view(request):
+#     if request.method == "GET":
+#         data = view_in_cart()  # TODO Вызвать ответственную за это действие функцию
+#         return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
+#                                                      'indent': 4})
+
 def cart_view(request):
     if request.method == "GET":
-        data = view_in_cart()  # TODO Вызвать ответственную за это действие функцию
-        return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
-                                                     'indent': 4})
+        data = view_in_cart()
+        json_param = request.GET.get("json")
+        if request.GET.get('format') == 'JSON':
+            return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
+                                                         'indent': 4})
+        products = []  # Список продуктов
+        for product_id, quantity in data['products'].items():
+            product = DATABASE.get(product_id)
+            product["quantity"] = quantity
+            product["price_total"] = f"{quantity * product['price_after']:.2f}"  # добавление общей цены позиции с ограничением в 2 знака
+            # 3. добавьте product в список products
+            products.append(product)
+
+        return render(request, "store/cart.html", context={"products": products})
 
 
 def cart_add_view(request, id_product):
