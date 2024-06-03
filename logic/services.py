@@ -138,6 +138,59 @@ def add_user_to_cart(request, username: str) -> None:
             cart_users[username] = {'products': {}}
             json.dump(cart_users, f)
 
+    """
+    Функции для избранного
+    """
+
+def view_in_wishlist(request) -> dict:
+    """
+    Просматривает содержимое wishlist.json
+
+    :return: Содержимое 'wishlist.json'
+    """
+    if os.path.exists('wishlist.json'):  # Если файл существует
+        with open('wishlist.json', encoding='utf-8') as f:
+            return json.load(f)
+
+    user = get_user(request).username
+    wishlist = {user: {'products': []}}
+    with open('wishlist.json', mode='x', encoding='utf-8') as f:  # Создаём файл и записываем туда пустую корзину
+        json.dump(wishlist, f)
+
+    return wishlist
+
+def add_to_wishlist(request, id_product: str) -> bool:
+    wishlist_users = view_in_wishlist(request)
+    wishlist = wishlist_users[get_user(request).username]
+    if id_product in DATABASE:
+        if id_product not in wishlist['products']:
+            wishlist['products'][id_product] = 1
+        with open('wishlist.json', mode='w', encoding='utf-8') as f:
+            json.dump(wishlist_users, f)
+        return True
+
+    return False
+
+def remove_from_wishlist(request, id_product: str) -> bool:
+    wishlist_users = view_in_wishlist(request)
+    wishlist = wishlist_users[get_user(request).username]
+    if id_product not in wishlist['products']:
+        return False
+    wishlist['products'].remove(id_product)
+    with open('wishlist.json', mode='w', encoding='utf-8') as f:
+        json.dump(wishlist_users, f)
+    return True
+
+def add_user_to_wishlist(request, username: str) -> None:
+
+    wishlist_users = view_in_wishlist(request)
+    wishlist = wishlist_users.get(username)
+
+    if not wishlist:
+        with open('wishlist.json', mode='w', encoding='utf-8') as f:
+            wishlist_users[username] = {'products': []}
+            json.dump(wishlist_users, f)
+
 if __name__ == "__main__":
     # Проверка работоспособности функций view_in_cart, add_to_cart, remove_from_cart
     # Для совпадения выходных значений перед запуском скрипта удаляйте появляющийся файл 'cart.json' в папке
@@ -152,7 +205,6 @@ if __name__ == "__main__":
     print(view_in_cart())  # {'products': {'2': 1}}
 
     # Предыдущий код, что был для проверки filtering_category закомментируйте
-
 
 if __name__ == "__main__":
     from store.models import DATABASE
