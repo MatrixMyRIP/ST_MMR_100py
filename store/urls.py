@@ -10,7 +10,7 @@ urlpatterns = [
     path('product/<slug:page>.html', products_page_view, name="products_page_view"),
     path('product/<int:page>', products_page_view),
     path('cart/', cart_view, name="cart_view"),
-    path('cart/add/<str:id_product>', cart_add_view),
+    path('cart/add/<str:id_product>', cart_add_view, name="cart_add_view"),
     path('cart/del/<str:id_product>', cart_del_view),
     path('coupon/check/<slug:name_coupon>', coupon_check_view),
     path('delivery/estimate', delivery_estimate_view),
